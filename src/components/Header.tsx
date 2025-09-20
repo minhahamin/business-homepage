@@ -54,18 +54,32 @@ export default function Header() {
         height: '80px'
       }}>
         {/* W 로고 */}
-        <div style={{ 
-          width: '50px', 
-          height: '50px', 
-          background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)',
-          borderRadius: '12px', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
-        }}>
-          <span style={{ color: 'white', fontWeight: 'bold', fontSize: '24px' }}>W</span>
-        </div>
+        <a href="/" style={{ textDecoration: 'none' }}>
+          <div style={{ 
+            width: '50px', 
+            height: '50px', 
+            background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)',
+            borderRadius: '12px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+            cursor: 'pointer',
+            transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+          }}
+          onMouseEnter={(e) => {
+            const target = e.target as HTMLDivElement;
+            target.style.transform = 'scale(1.05)';
+            target.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.4)';
+          }}
+          onMouseLeave={(e) => {
+            const target = e.target as HTMLDivElement;
+            target.style.transform = 'scale(1)';
+            target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+          }}>
+            <span style={{ color: 'white', fontWeight: 'bold', fontSize: '24px' }}>W</span>
+          </div>
+        </a>
 
         {/* 네비게이션 메뉴 */}
         <nav style={{ display: 'flex', gap: '40px' }}>
