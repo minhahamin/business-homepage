@@ -1,6 +1,7 @@
 ﻿'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function Header() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -54,7 +55,7 @@ export default function Header() {
         height: '80px'
       }}>
         {/* W 로고 */}
-        <a href="/" style={{ textDecoration: 'none' }}>
+        <Link href="/" style={{ textDecoration: 'none' }}>
           <div style={{ 
             width: '50px', 
             height: '50px', 
@@ -79,7 +80,7 @@ export default function Header() {
           }}>
             <span style={{ color: 'white', fontWeight: 'bold', fontSize: '24px' }}>W</span>
           </div>
-        </a>
+        </Link>
 
         {/* 네비게이션 메뉴 */}
         <nav style={{ display: 'flex', gap: '40px' }}>
@@ -122,7 +123,7 @@ export default function Header() {
                 }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     {item.dropdown.map((subItem, subIndex) => (
-                      <a
+                      <Link
                         key={subIndex}
                         href={subItem.href}
                         style={{
@@ -148,7 +149,7 @@ export default function Header() {
                         }}
                       >
                         {subItem.title}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 </div>
