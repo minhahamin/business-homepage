@@ -126,7 +126,7 @@ export default function Greeting() {
                     color: '#2d3748',
                     marginBottom: '4px'
                   }}>
-                    "고객의 성공이 저희의 성공입니다"
+                    &ldquo;고객의 성공이 저희의 성공입니다&rdquo;
                   </p>
                   <p style={{
                     fontSize: '14px',
@@ -200,7 +200,7 @@ export default function Greeting() {
                 lineHeight: '1.6',
                 color: '#4a5568'
               }}>
-                "디지털 혁신을 통해 모든 기업이 성장할 수 있는 세상을 만들어갑니다"
+                &ldquo;디지털 혁신을 통해 모든 기업이 성장할 수 있는 세상을 만들어갑니다&rdquo;
               </p>
             </div>
 
@@ -238,7 +238,7 @@ export default function Greeting() {
                 lineHeight: '1.6',
                 color: '#4a5568'
               }}>
-                "최신 기술과 창의적 아이디어로 고객의 비즈니스 성공을 지원합니다"
+                &ldquo;최신 기술과 창의적 아이디어로 고객의 비즈니스 성공을 지원합니다&rdquo;
               </p>
             </div>
           </div>
