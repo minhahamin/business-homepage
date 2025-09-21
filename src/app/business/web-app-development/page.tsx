@@ -8,7 +8,7 @@ export default function WebAppDevelopment() {
       {/* 웹 개발 & 앱 개발 섹션 */}
       <section style={{
         padding: '80px 0',
-        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)'
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
       }}>
         <div style={{
           maxWidth: '1200px',
@@ -18,25 +18,22 @@ export default function WebAppDevelopment() {
           {/* 페이지 제목 */}
           <div style={{
             textAlign: 'center',
-            marginBottom: '80px'
+            marginBottom: '80px',
+            color: 'white'
           }}>
             <h1 style={{
               fontSize: '48px',
               fontWeight: 'bold',
-              color: '#1a202c',
-              marginBottom: '24px',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent'
+              marginBottom: '24px'
             }}>
-              웹 개발 & 앱 개발
+              💻📱 웹 개발 & 앱 개발
             </h1>
             <p style={{
               fontSize: '20px',
-              color: '#4a5568',
               maxWidth: '800px',
               margin: '0 auto',
-              lineHeight: '1.6'
+              lineHeight: '1.6',
+              opacity: '0.9'
             }}>
               최신 기술을 활용하여 사용자 친화적이고 성능이 뛰어난 웹사이트와 모바일 앱을 개발합니다.
             </p>

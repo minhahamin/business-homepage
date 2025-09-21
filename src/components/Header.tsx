@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import styles from './Header.module.css';
 
 export default function Header() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
     {
@@ -44,109 +46,36 @@ export default function Header() {
   ];
 
   return (
-    <header style={{ backgroundColor: 'white', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}>
-      <div style={{ 
-        maxWidth: '1200px', 
-        margin: '0 auto', 
-        padding: '0 24px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        height: '80px'
-      }}>
+    <header className={styles.header}>
+      <div className={styles.container}>
         {/* W 로고 */}
-        <Link href="/" style={{ textDecoration: 'none' }}>
-          <div style={{ 
-            width: '50px', 
-            height: '50px', 
-            background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)',
-            borderRadius: '12px', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
-            cursor: 'pointer',
-            transition: 'transform 0.2s ease, box-shadow 0.2s ease'
-          }}
-          onMouseEnter={(e) => {
-            const target = e.target as HTMLDivElement;
-            target.style.transform = 'scale(1.05)';
-            target.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.4)';
-          }}
-          onMouseLeave={(e) => {
-            const target = e.target as HTMLDivElement;
-            target.style.transform = 'scale(1)';
-            target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
-          }}>
-            <span style={{ color: 'white', fontWeight: 'bold', fontSize: '24px' }}>W</span>
-          </div>
+        <Link href="/" className={styles.logo}>
+          <span className={styles.logoText}>W</span>
         </Link>
 
-        {/* 네비게이션 메뉴 */}
-        <nav style={{ display: 'flex', gap: '40px' }}>
+        {/* 데스크톱 네비게이션 메뉴 */}
+        <nav className={styles.desktopNav}>
           {menuItems.map((item, index) => (
             <div
               key={index}
-              style={{ 
-                position: 'relative'
-              }}
+              className={styles.menuItem}
               onMouseEnter={() => setActiveDropdown(item.title)}
               onMouseLeave={() => setActiveDropdown(null)}
             >
               {/* 메인 메뉴 */}
-              <span style={{ 
-                fontSize: '18px', 
-                fontWeight: 'bold', 
-                color: '#1F2937',
-                cursor: 'pointer',
-                transition: 'color 0.3s ease',
-                padding: '12px 0'
-              }}>
+              <span className={styles.menuTitle}>
                 {item.title}
               </span>
 
               {/* 드롭다운 메뉴 */}
               {activeDropdown === item.title && (
-                <div style={{ 
-                  position: 'absolute', 
-                  top: '100%', 
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  width: '250px', 
-                  backgroundColor: 'white', 
-                  boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)', 
-                  border: '1px solid #E5E7EB', 
-                  borderRadius: '8px',
-                  padding: '16px 0', 
-                  zIndex: 50,
-                  marginTop: '8px'
-                }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <div className={styles.dropdown}>
+                  <div className={styles.dropdownContent}>
                     {item.dropdown.map((subItem, subIndex) => (
                       <Link
                         key={subIndex}
                         href={subItem.href}
-                        style={{
-                          display: 'block',
-                          padding: '8px 16px',
-                          fontSize: '14px',
-                          textDecoration: 'none',
-                          borderRadius: '4px',
-                          transition: 'all 0.2s ease',
-                          backgroundColor: subItem.isHighlighted ? '#EFF6FF' : 'transparent',
-                          color: subItem.isHighlighted ? '#1F2937' : '#6B7280',
-                          fontWeight: subItem.isHighlighted ? 'bold' : 'normal'
-                        }}
-                        onMouseEnter={(e) => {
-                          const target = e.target as HTMLAnchorElement;
-                          target.style.backgroundColor = subItem.isHighlighted ? '#DBEAFE' : '#F9FAFB';
-                          target.style.color = '#1F2937';
-                        }}
-                        onMouseLeave={(e) => {
-                          const target = e.target as HTMLAnchorElement;
-                          target.style.backgroundColor = subItem.isHighlighted ? '#EFF6FF' : 'transparent';
-                          target.style.color = subItem.isHighlighted ? '#1F2937' : '#6B7280';
-                        }}
+                        className={`${styles.dropdownLink} ${subItem.isHighlighted ? styles.highlighted : ''}`}
                       >
                         {subItem.title}
                       </Link>
@@ -157,7 +86,69 @@ export default function Header() {
             </div>
           ))}
         </nav>
+
+        {/* 모바일 햄버거 메뉴 버튼 */}
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className={styles.mobileMenuButton}
+        >
+          <div className={`${styles.hamburgerLine} ${isMobileMenuOpen ? styles.open : ''}`} />
+          <div className={`${styles.hamburgerLine} ${isMobileMenuOpen ? styles.open : ''}`} />
+          <div className={`${styles.hamburgerLine} ${isMobileMenuOpen ? styles.open : ''}`} />
+        </button>
       </div>
+
+      {/* 모바일 메뉴 오버레이 */}
+      {isMobileMenuOpen && (
+        <div 
+          className={styles.mobileMenuOverlay}
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* 모바일 메뉴 */}
+      {isMobileMenuOpen && (
+        <div className={styles.mobileMenu}>
+          <div className={styles.mobileMenuHeader}>
+            <div className={styles.mobileMenuTitle}>메뉴</div>
+            <button 
+              className={styles.closeButton}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              ×
+            </button>
+          </div>
+          
+          {menuItems.map((item, index) => (
+            <div key={index} className={styles.mobileMenuItem}>
+              <div
+                className={styles.mobileMenuItemTitle}
+                onClick={() => setActiveDropdown(activeDropdown === item.title ? null : item.title)}
+              >
+                {item.title}
+                <span className={`${styles.arrow} ${activeDropdown === item.title ? styles.open : ''}`}>
+                  ▼
+                </span>
+              </div>
+              
+              {activeDropdown === item.title && (
+                <div className={styles.mobileDropdown}>
+                  {item.dropdown.map((subItem, subIndex) => (
+                    <Link
+                      key={subIndex}
+                      href={subItem.href}
+                      className={`${styles.mobileDropdownLink} ${subItem.isHighlighted ? styles.highlighted : ''}`}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {subItem.title}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </header>
   );
 }

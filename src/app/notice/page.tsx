@@ -1,5 +1,7 @@
 'use client';
 
+import styles from './Notice.module.css';
+
 import Header from '@/components/Header';
 
 export default function Notice() {
@@ -225,18 +227,8 @@ export default function Notice() {
             overflow: 'hidden',
             boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
           }}>
-            {/* 테이블 헤더 */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '80px 1fr 100px 120px 80px',
-              gap: '20px',
-              padding: '20px 30px',
-              backgroundColor: '#f8fafc',
-              borderBottom: '1px solid #e2e8f0',
-              fontWeight: 'bold',
-              fontSize: '14px',
-              color: '#374151'
-            }}>
+            {/* 테이블 헤더 - 데스크톱만 */}
+            <div className={styles.tableHeader}>
               <div style={{ textAlign: 'center' }}>번호</div>
               <div>제목</div>
               <div style={{ textAlign: 'center' }}>분류</div>
@@ -244,109 +236,88 @@ export default function Notice() {
               <div style={{ textAlign: 'center' }}>조회수</div>
             </div>
 
-            {/* 테이블 내용 */}
-            <div>
+            {/* 데스크톱 테이블 내용 */}
+            <div className={styles.desktopTable}>
               {notices.map((notice, index) => (
                 <div
                   key={notice.id}
+                  className={styles.tableRow}
                   style={{
-                    display: 'grid',
-                    gridTemplateColumns: '80px 1fr 100px 120px 80px',
-                    gap: '20px',
-                    padding: '20px 30px',
-                    borderBottom: index < notices.length - 1 ? '1px solid #f1f5f9' : 'none',
-                    transition: 'all 0.2s ease',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => {
-                    const target = e.currentTarget;
-                    target.style.backgroundColor = '#f8fafc';
-                  }}
-                  onMouseLeave={(e) => {
-                    const target = e.currentTarget;
-                    target.style.backgroundColor = 'transparent';
+                    borderBottom: index < notices.length - 1 ? '1px solid #f1f5f9' : 'none'
                   }}
                 >
                   {/* 번호 */}
-                  <div style={{
-                    textAlign: 'center',
-                    fontSize: '14px',
-                    color: '#6b7280',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
+                  <div className={styles.number}>
                     {notice.id}
                   </div>
 
                   {/* 제목 */}
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}>
+                  <div className={styles.titleContainer}>
                     {notice.isImportant && (
-                      <span style={{
-                        backgroundColor: '#f5576c',
-                        color: 'white',
-                        fontSize: '10px',
-                        fontWeight: 'bold',
-                        padding: '2px 6px',
-                        borderRadius: '4px'
-                      }}>
+                      <span className={styles.importantTag}>
                         중요
                       </span>
                     )}
-                    <span style={{
-                      fontSize: '14px',
-                      color: '#1f2937',
-                      fontWeight: notice.isImportant ? 'bold' : 'normal'
-                    }}>
+                    <span className={`${styles.titleText} ${notice.isImportant ? styles.important : ''}`}>
                       {notice.title}
                     </span>
                   </div>
 
                   {/* 분류 */}
-                  <div style={{
-                    textAlign: 'center',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <span style={{
-                      background: getCategoryColor(notice.category),
-                      color: 'white',
-                      fontSize: '12px',
-                      fontWeight: 'bold',
-                      padding: '4px 8px',
-                      borderRadius: '6px'
-                    }}>
+                  <div className={styles.categoryContainer}>
+                    <span 
+                      className={styles.categoryTag}
+                      style={{ '--category-color': getCategoryColor(notice.category) } as React.CSSProperties}
+                    >
                       {notice.category}
                     </span>
                   </div>
 
                   {/* 등록일 */}
-                  <div style={{
-                    textAlign: 'center',
-                    fontSize: '14px',
-                    color: '#6b7280',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
+                  <div className={styles.date}>
                     {notice.date}
                   </div>
 
                   {/* 조회수 */}
-                  <div style={{
-                    textAlign: 'center',
-                    fontSize: '14px',
-                    color: '#6b7280',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
+                  <div className={styles.views}>
                     {notice.views.toLocaleString()}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* 모바일 카드 레이아웃 */}
+            <div className={styles.mobileCards}>
+              {notices.map((notice, index) => (
+                <div
+                  key={`mobile-${notice.id}`}
+                  className={styles.mobileCard}
+                  style={{
+                    borderBottom: index < notices.length - 1 ? '1px solid #f1f5f9' : 'none'
+                  }}
+                >
+                  {/* 제목과 중요 표시 */}
+                  <div className={styles.mobileTitleContainer}>
+                    {notice.isImportant && (
+                      <span className={styles.importantTag}>
+                        중요
+                      </span>
+                    )}
+                    <h3 className={`${styles.mobileTitleText} ${notice.isImportant ? styles.important : ''}`}>
+                      {notice.title}
+                    </h3>
+                  </div>
+
+                  {/* 메타 정보 */}
+                  <div className={styles.metaInfo}>
+                    <span 
+                      className={styles.mobileCategoryTag}
+                      style={{ '--category-color': getCategoryColor(notice.category) } as React.CSSProperties}
+                    >
+                      {notice.category}
+                    </span>
+                    <span>{notice.date}</span>
+                    <span>조회 {notice.views.toLocaleString()}</span>
                   </div>
                 </div>
               ))}

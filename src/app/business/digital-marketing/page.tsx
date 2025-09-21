@@ -8,7 +8,7 @@ export default function DigitalMarketing() {
       {/* 디지털 마케팅 섹션 */}
       <section style={{
         padding: '80px 0',
-        background: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%)'
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
       }}>
         <div style={{
           maxWidth: '1200px',
