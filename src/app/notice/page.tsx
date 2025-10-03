@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import styles from './Notice.module.css';
 import Header from '@/components/Header';
 
@@ -372,6 +373,29 @@ export default function Notice() {
               </button>
             </div>
           )}
+
+          {/* 관리자 로그인 링크 */}
+          <div style={{
+            marginTop: '60px',
+            textAlign: 'center',
+            paddingBottom: '40px'
+          }}>
+            <Link href="/admin/login">
+              <span style={{
+                fontSize: '0.75rem',
+                color: '#999',
+                textDecoration: 'none',
+                opacity: 0.6,
+                transition: 'opacity 0.2s ease',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.opacity = '1'}
+              onMouseOut={(e) => e.currentTarget.style.opacity = '0.6'}
+              >
+                🔐 관리자
+              </span>
+            </Link>
+          </div>
         </div>
       </section>
     </div>
