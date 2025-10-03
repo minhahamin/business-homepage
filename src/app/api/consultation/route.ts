@@ -4,23 +4,12 @@ import { Resend } from 'resend';
 // Resend 초기화
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// 카카오톡 알림 전송 함수
+// 카카오톡 알림 전송 함수 (나에게 보내기)
 async function sendKakaoNotification(formData: any) {
   try {
-    // 실제 카카오톡 알림톡 API 호출
-    // 카카오 비즈니스 계정과 REST API 키가 필요합니다
-    const KAKAO_API_KEY = process.env.KAKAO_API_KEY;
-    const KAKAO_SENDER_KEY = process.env.KAKAO_SENDER_KEY;
-    const KAKAO_TEMPLATE_CODE = process.env.KAKAO_TEMPLATE_CODE;
-    const ADMIN_PHONE = process.env.ADMIN_PHONE || '010-1234-5678';
+    const KAKAO_ACCESS_TOKEN = process.env.KAKAO_ACCESS_TOKEN;
 
-    if (!KAKAO_API_KEY) {
-      console.log('⚠️ 카카오 API 키가 설정되지 않았습니다. 데모 모드로 실행합니다.');
-      console.log('📱 [데모] 카카오톡 알림이 전송되었습니다:');
-      console.log({
-        받는사람: ADMIN_PHONE,
-        내용: `
-🔔 새로운 상담 신청이 접수되었습니다!
+    const messageText = `🔔 새로운 상담 신청이 접수되었습니다!
 
 👤 이름: ${formData.name}
 🏢 회사: ${formData.company || '미입력'}
@@ -33,35 +22,45 @@ async function sendKakaoNotification(formData: any) {
 📝 상세 내용:
 ${formData.message || '없음'}
 
-👉 빠른 답변 부탁드립니다!
-        `
+👉 빠른 답변 부탁드립니다!`;
+
+    if (!KAKAO_ACCESS_TOKEN) {
+      console.log('⚠️ 카카오 Access Token이 설정되지 않았습니다. 데모 모드로 실행합니다.');
+      console.log('📱 [데모] 카카오톡 알림이 전송되었습니다:');
+      console.log({
+        받는사람: '나에게 보내기',
+        내용: messageText
       });
       return { success: true, mode: 'demo' };
     }
 
-    // 실제 카카오 알림톡 API 호출 (카카오 비즈니스 계정 필요)
-    const response = await fetch('https://kapi.kakao.com/v1/api/talk/friends/message/default/send', {
+    // 카카오톡 "나에게 보내기" API 호출
+    const response = await fetch('https://kapi.kakao.com/v2/api/talk/memo/default/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer ${KAKAO_API_KEY}`
+        'Authorization': `Bearer ${KAKAO_ACCESS_TOKEN}`
       },
       body: new URLSearchParams({
         template_object: JSON.stringify({
           object_type: 'text',
-          text: `🔔 새로운 상담 신청\n\n👤 ${formData.name}\n📧 ${formData.email}\n📞 ${formData.phone}\n💼 ${getServiceName(formData.service)}`,
+          text: messageText,
           link: {
-            web_url: 'https://yoursite.com/admin',
-            mobile_web_url: 'https://yoursite.com/admin'
+            web_url: 'http://localhost:3000/admin',
+            mobile_web_url: 'http://localhost:3000/admin'
           }
         })
       })
     });
 
+    const result = await response.json();
+
     if (!response.ok) {
+      console.error('카카오톡 API 오류:', result);
       throw new Error('카카오톡 전송 실패');
     }
 
+    console.log('✅ 카카오톡 전송 성공!');
     return { success: true, mode: 'production' };
   } catch (error) {
     console.error('카카오톡 알림 전송 실패:', error);

@@ -241,10 +241,8 @@ export default function AdminLogin() {
         }}>
           <strong>💡 데모 계정:</strong><br />
           아이디: admin<br />
-          비밀번호: admin123
-          <div style={{ marginTop: '8px', fontSize: '0.8rem', color: '#999' }}>
-            (실제 사용 전에 PostgreSQL 데이터베이스를 설정하고 관리자 계정을 생성하세요)
-          </div>
+          {/* 비밀번호: admin123 */}
+          
         </div>
       </div>
     </div>
