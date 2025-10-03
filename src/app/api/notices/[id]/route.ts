@@ -8,9 +8,10 @@ const CACHE_DURATION = 60000; // 1분
 // 특정 공지사항 조회 (조회수 증가)
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params;
     const { id } = params;
     
     // 클라이언트 IP나 세션 식별 (간단한 버전)

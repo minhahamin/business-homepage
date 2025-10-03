@@ -6,7 +6,7 @@ import { prisma } from '@/lib/prisma';
 // 관리자용 - 공지사항 수정
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const cookieStore = cookies();
@@ -20,6 +20,7 @@ export async function PUT(
       );
     }
 
+    const params = await context.params;
     const { id } = params;
     const { title, content, isPinned, isPublished } = await request.json();
 
@@ -58,7 +59,7 @@ export async function PUT(
 // 관리자용 - 공지사항 삭제
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const cookieStore = cookies();
@@ -72,6 +73,7 @@ export async function DELETE(
       );
     }
 
+    const params = await context.params;
     const { id } = params;
 
     await prisma.notice.delete({

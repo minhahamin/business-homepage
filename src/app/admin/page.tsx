@@ -34,6 +34,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchAdminInfo();
     fetchNotices();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchAdminInfo = async () => {
