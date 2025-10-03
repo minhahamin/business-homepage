@@ -1,0 +1,62 @@
+// Prisma 스키마 파일
+// PostgreSQL 데이터베이스 설정
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 관리자 모델
+model Admin {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String   // bcrypt로 해시된 비밀번호
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // 관리자가 작성한 공지사항
+  notices   Notice[]
+}
+
+// 공지사항 모델
+model Notice {
+  id          String   @id @default(cuid())
+  title       String
+  content     String   @db.Text
+  author      Admin    @relation(fields: [authorId], references: [id])
+  authorId    String
+  views       Int      @default(0)
+  isPinned    Boolean  @default(false) // 상단 고정 여부
+  isPublished Boolean  @default(true)  // 공개 여부
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([createdAt])
+  @@index([isPinned])
+}
+
+// 상담 신청 모델 (추가 - 기존 상담 신청도 DB에 저장)
+model Consultation {
+  id        String   @id @default(cuid())
+  name      String
+  company   String?
+  email     String
+  phone     String
+  service   String?
+  budget    String?
+  timeline  String?
+  message   String?  @db.Text
+  status    String   @default("pending") // pending, contacted, completed, canceled
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([createdAt])
+  @@index([status])
+}
+

@@ -1,106 +1,71 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import styles from './Notice.module.css';
-
 import Header from '@/components/Header';
 
-export default function Notice() {
-  // 공지사항 데이터
-  const notices = [
-    {
-      id: 1,
-      title: '2024년 4분기 시스템 점검 안내',
-      category: '시스템',
-      date: '2024-12-15',
-      views: 1250,
-      isImportant: true
-    },
-    {
-      id: 2,
-      title: '신규 서비스 출시 및 이용 안내',
-      category: '서비스',
-      date: '2024-12-10',
-      views: 890,
-      isImportant: true
-    },
-    {
-      id: 3,
-      title: '연말연시 고객지원센터 운영시간 변경 안내',
-      category: '운영',
-      date: '2024-12-08',
-      views: 650,
-      isImportant: false
-    },
-    {
-      id: 4,
-      title: '개인정보처리방침 개정 안내',
-      category: '정책',
-      date: '2024-12-05',
-      views: 420,
-      isImportant: false
-    },
-    {
-      id: 5,
-      title: '2024년 3분기 실적 발표 및 사업 계획',
-      category: '사업',
-      date: '2024-12-01',
-      views: 780,
-      isImportant: false
-    },
-    {
-      id: 6,
-      title: '보안 업데이트 및 권장사항 안내',
-      category: '보안',
-      date: '2024-11-28',
-      views: 920,
-      isImportant: true
-    },
-    {
-      id: 7,
-      title: '고객 만족도 설문조사 결과 공개',
-      category: '고객',
-      date: '2024-11-25',
-      views: 350,
-      isImportant: false
-    },
-    {
-      id: 8,
-      title: 'API 서비스 이용약관 개정 안내',
-      category: '정책',
-      date: '2024-11-20',
-      views: 580,
-      isImportant: false
-    },
-    {
-      id: 9,
-      title: '모바일 앱 업데이트 버전 2.1.0 출시',
-      category: '서비스',
-      date: '2024-11-15',
-      views: 1100,
-      isImportant: false
-    },
-    {
-      id: 10,
-      title: '서버 이전 작업으로 인한 서비스 일시 중단 안내',
-      category: '시스템',
-      date: '2024-11-10',
-      views: 750,
-      isImportant: true
-    }
-  ];
-
-  const getCategoryColor = (category: string) => {
-    const colors: { [key: string]: string } = {
-      '시스템': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      '서비스': 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-      '운영': 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-      '정책': 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-      '사업': 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
-      '보안': 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-      '고객': 'linear-gradient(135deg, #d299c2 0%, #fef9d7 100%)'
-    };
-    return colors[category] || colors['운영'];
+interface Notice {
+  id: string;
+  title: string;
+  content: string;
+  views: number;
+  isPinned: boolean;
+  createdAt: string;
+  author: {
+    name: string;
   };
+}
+
+export default function Notice() {
+  const [notices, setNotices] = useState<Notice[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+    fetchNotices();
+  }, [page]);
+
+  const fetchNotices = async () => {
+    try {
+      const response = await fetch(`/api/notices?page=${page}&limit=10`);
+      const result = await response.json();
+
+      if (response.ok) {
+        setNotices(result.notices);
+        setTotalPages(result.pagination.totalPages);
+      }
+    } catch (error) {
+      console.error('공지사항 조회 실패:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).replace(/\. /g, '-').replace('.', '');
+  };
+
+  if (isLoading) {
+    return (
+      <div style={{ minHeight: '100vh', backgroundColor: 'white' }}>
+        <Header />
+        <div style={{
+          minHeight: '60vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <div style={{ fontSize: '1.2rem', color: '#666' }}>로딩 중...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'white' }}>
@@ -186,13 +151,13 @@ export default function Notice() {
                 color: '#f5576c',
                 marginBottom: '8px'
               }}>
-                {notices.filter(n => n.isImportant).length}
+                {notices.filter(n => n.isPinned).length}
               </div>
               <div style={{
                 fontSize: '14px',
                 color: '#6b7280'
               }}>
-                중요 공지사항
+                고정 공지사항
               </div>
             </div>
             
@@ -209,7 +174,7 @@ export default function Notice() {
                 color: '#43e97b',
                 marginBottom: '8px'
               }}>
-                {Math.round(notices.reduce((sum, n) => sum + n.views, 0) / notices.length)}
+                {notices.length > 0 ? Math.round(notices.reduce((sum, n) => sum + n.views, 0) / notices.length) : 0}
               </div>
               <div style={{
                 fontSize: '14px',
@@ -231,247 +196,175 @@ export default function Notice() {
             <div className={styles.tableHeader}>
               <div style={{ textAlign: 'center' }}>번호</div>
               <div>제목</div>
-              <div style={{ textAlign: 'center' }}>분류</div>
+              <div style={{ textAlign: 'center' }}>작성자</div>
               <div style={{ textAlign: 'center' }}>등록일</div>
               <div style={{ textAlign: 'center' }}>조회수</div>
             </div>
 
             {/* 데스크톱 테이블 내용 */}
             <div className={styles.desktopTable}>
-              {notices.map((notice, index) => (
-                <div
-                  key={notice.id}
-                  className={styles.tableRow}
-                  style={{
-                    borderBottom: index < notices.length - 1 ? '1px solid #f1f5f9' : 'none'
-                  }}
-                >
-                  {/* 번호 */}
-                  <div className={styles.number}>
-                    {notice.id}
-                  </div>
-
-                  {/* 제목 */}
-                  <div className={styles.titleContainer}>
-                    {notice.isImportant && (
-                      <span className={styles.importantTag}>
-                        중요
-                      </span>
-                    )}
-                    <span className={`${styles.titleText} ${notice.isImportant ? styles.important : ''}`}>
-                      {notice.title}
-                    </span>
-                  </div>
-
-                  {/* 분류 */}
-                  <div className={styles.categoryContainer}>
-                    <span 
-                      className={styles.categoryTag}
-                      style={{ '--category-color': getCategoryColor(notice.category) } as React.CSSProperties}
-                    >
-                      {notice.category}
-                    </span>
-                  </div>
-
-                  {/* 등록일 */}
-                  <div className={styles.date}>
-                    {notice.date}
-                  </div>
-
-                  {/* 조회수 */}
-                  <div className={styles.views}>
-                    {notice.views.toLocaleString()}
-                  </div>
+              {notices.length === 0 ? (
+                <div style={{
+                  textAlign: 'center',
+                  padding: '60px 20px',
+                  color: '#999'
+                }}>
+                  <div style={{ fontSize: '3rem', marginBottom: '16px' }}>📭</div>
+                  <div>등록된 공지사항이 없습니다.</div>
                 </div>
-              ))}
+              ) : (
+                notices.map((notice, index) => (
+                  <div
+                    key={notice.id}
+                    className={styles.tableRow}
+                    style={{
+                      borderBottom: index < notices.length - 1 ? '1px solid #f1f5f9' : 'none'
+                    }}
+                  >
+                    {/* 번호 */}
+                    <div className={styles.number}>
+                      {index + 1 + (page - 1) * 10}
+                    </div>
+
+                    {/* 제목 */}
+                    <div className={styles.titleContainer}>
+                      {notice.isPinned && (
+                        <span className={styles.importantTag}>
+                          📌 고정
+                        </span>
+                      )}
+                      <span className={`${styles.titleText} ${notice.isPinned ? styles.important : ''}`}>
+                        {notice.title}
+                      </span>
+                    </div>
+
+                    {/* 작성자 */}
+                    <div className={styles.categoryContainer}>
+                      <span>{notice.author.name}</span>
+                    </div>
+
+                    {/* 등록일 */}
+                    <div className={styles.date}>
+                      {formatDate(notice.createdAt)}
+                    </div>
+
+                    {/* 조회수 */}
+                    <div className={styles.views}>
+                      {notice.views.toLocaleString()}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
 
             {/* 모바일 카드 레이아웃 */}
             <div className={styles.mobileCards}>
-              {notices.map((notice, index) => (
-                <div
-                  key={`mobile-${notice.id}`}
-                  className={styles.mobileCard}
-                  style={{
-                    borderBottom: index < notices.length - 1 ? '1px solid #f1f5f9' : 'none'
-                  }}
-                >
-                  {/* 제목과 중요 표시 */}
-                  <div className={styles.mobileTitleContainer}>
-                    {notice.isImportant && (
-                      <span className={styles.importantTag}>
-                        중요
-                      </span>
-                    )}
-                    <h3 className={`${styles.mobileTitleText} ${notice.isImportant ? styles.important : ''}`}>
-                      {notice.title}
-                    </h3>
-                  </div>
-
-                  {/* 메타 정보 */}
-                  <div className={styles.metaInfo}>
-                    <span 
-                      className={styles.mobileCategoryTag}
-                      style={{ '--category-color': getCategoryColor(notice.category) } as React.CSSProperties}
-                    >
-                      {notice.category}
-                    </span>
-                    <span>{notice.date}</span>
-                    <span>조회 {notice.views.toLocaleString()}</span>
-                  </div>
+              {notices.length === 0 ? (
+                <div style={{
+                  textAlign: 'center',
+                  padding: '60px 20px',
+                  color: '#999'
+                }}>
+                  <div style={{ fontSize: '3rem', marginBottom: '16px' }}>📭</div>
+                  <div>등록된 공지사항이 없습니다.</div>
                 </div>
-              ))}
+              ) : (
+                notices.map((notice, index) => (
+                  <div
+                    key={`mobile-${notice.id}`}
+                    className={styles.mobileCard}
+                    style={{
+                      borderBottom: index < notices.length - 1 ? '1px solid #f1f5f9' : 'none'
+                    }}
+                  >
+                    {/* 제목과 고정 표시 */}
+                    <div className={styles.mobileTitleContainer}>
+                      {notice.isPinned && (
+                        <span className={styles.importantTag}>
+                          📌 고정
+                        </span>
+                      )}
+                      <h3 className={`${styles.mobileTitleText} ${notice.isPinned ? styles.important : ''}`}>
+                        {notice.title}
+                      </h3>
+                    </div>
+
+                    {/* 메타 정보 */}
+                    <div className={styles.metaInfo}>
+                      <span>{notice.author.name}</span>
+                      <span>{formatDate(notice.createdAt)}</span>
+                      <span>조회 {notice.views.toLocaleString()}</span>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
           {/* 페이지네이션 */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '8px',
-            marginTop: '40px'
-          }}>
-            <button style={{
-              padding: '8px 12px',
-              backgroundColor: '#e5e7eb',
-              color: '#6b7280',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '14px',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
+          {totalPages > 1 && (
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '8px',
+              marginTop: '40px'
             }}>
-              이전
-            </button>
-            
-            {[1, 2, 3, 4, 5].map((page) => (
-              <button
-                key={page}
+              <button 
+                onClick={() => setPage(Math.max(1, page - 1))}
+                disabled={page === 1}
                 style={{
                   padding: '8px 12px',
-                  backgroundColor: page === 1 ? '#667eea' : '#f3f4f6',
-                  color: page === 1 ? 'white' : '#374151',
+                  backgroundColor: page === 1 ? '#f3f4f6' : '#e5e7eb',
+                  color: page === 1 ? '#d1d5db' : '#6b7280',
                   border: 'none',
                   borderRadius: '6px',
                   fontSize: '14px',
-                  fontWeight: page === 1 ? 'bold' : 'normal',
-                  cursor: 'pointer',
+                  cursor: page === 1 ? 'not-allowed' : 'pointer',
                   transition: 'all 0.2s ease'
                 }}
               >
-                {page}
+                이전
               </button>
-            ))}
-            
-            <button style={{
-              padding: '8px 12px',
-              backgroundColor: '#e5e7eb',
-              color: '#6b7280',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '14px',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
-            }}>
-              다음
-            </button>
-          </div>
-
-          {/* 검색 및 필터 */}
-          <div style={{
-            marginTop: '40px',
-            padding: '30px',
-            backgroundColor: 'white',
-            borderRadius: '16px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-          }}>
-            <h3 style={{
-              fontSize: '20px',
-              fontWeight: 'bold',
-              color: '#1a202c',
-              marginBottom: '20px'
-            }}>
-              검색 및 필터
-            </h3>
-            
-            <div style={{
-              display: 'flex',
-              gap: '16px',
-              flexWrap: 'wrap',
-              alignItems: 'end'
-            }}>
-              <div style={{ flex: '1', minWidth: '200px' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: 'bold',
-                  color: '#374151',
-                  marginBottom: '8px'
-                }}>
-                  검색어
-                </label>
-                <input
-                  type="text"
-                  placeholder="제목 또는 내용을 입력하세요"
+              
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                <button
+                  key={pageNum}
+                  onClick={() => setPage(pageNum)}
                   style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    backgroundColor: pageNum === page ? '#667eea' : '#f3f4f6',
+                    color: pageNum === page ? 'white' : '#374151',
+                    border: 'none',
+                    borderRadius: '6px',
                     fontSize: '14px',
-                    outline: 'none',
-                    transition: 'border-color 0.2s ease'
+                    fontWeight: pageNum === page ? 'bold' : 'normal',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
                   }}
-                />
-              </div>
+                >
+                  {pageNum}
+                </button>
+              ))}
               
-              <div style={{ minWidth: '150px' }}>
-                <label style={{
-                  display: 'block',
+              <button 
+                onClick={() => setPage(Math.min(totalPages, page + 1))}
+                disabled={page === totalPages}
+                style={{
+                  padding: '8px 12px',
+                  backgroundColor: page === totalPages ? '#f3f4f6' : '#e5e7eb',
+                  color: page === totalPages ? '#d1d5db' : '#6b7280',
+                  border: 'none',
+                  borderRadius: '6px',
                   fontSize: '14px',
-                  fontWeight: 'bold',
-                  color: '#374151',
-                  marginBottom: '8px'
-                }}>
-                  분류
-                </label>
-                <select style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  backgroundColor: 'white',
-                  outline: 'none'
-                }}>
-                  <option value="">전체</option>
-                  <option value="시스템">시스템</option>
-                  <option value="서비스">서비스</option>
-                  <option value="운영">운영</option>
-                  <option value="정책">정책</option>
-                  <option value="사업">사업</option>
-                  <option value="보안">보안</option>
-                  <option value="고객">고객</option>
-                </select>
-              </div>
-              
-              <button style={{
-                padding: '12px 24px',
-                backgroundColor: '#667eea',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                height: 'fit-content'
-              }}>
-                검색
+                  cursor: page === totalPages ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                다음
               </button>
             </div>
-          </div>
+          )}
         </div>
       </section>
     </div>
