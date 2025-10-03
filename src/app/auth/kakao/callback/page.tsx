@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function KakaoCallback() {
+function KakaoCallbackContent() {
   const searchParams = useSearchParams();
   const [code, setCode] = useState('');
   const [accessToken, setAccessToken] = useState('');
@@ -321,6 +321,24 @@ KAKAO_ACCESS_TOKEN=${accessToken || 'your_access_token_here'}`}
         </div>
       </div>
     </div>
+  );
+}
+
+export default function KakaoCallback() {
+  return (
+    <Suspense fallback={
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+      }}>
+        <div style={{ color: 'white', fontSize: '1.5rem' }}>로딩 중...</div>
+      </div>
+    }>
+      <KakaoCallbackContent />
+    </Suspense>
   );
 }
 
