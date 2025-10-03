@@ -1,4 +1,5 @@
-﻿import Header from '@/components/Header'; 
+﻿import Header from '@/components/Header';
+import Link from 'next/link'; 
 
 export default function Home() {
   return (
@@ -152,34 +153,38 @@ export default function Home() {
 
             {/* CTA 버튼 */}
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-              <button style={{
-                padding: '16px 32px',
-                backgroundColor: '#FFD700',
-                color: '#1a1a1a',
-                border: 'none',
-                borderRadius: '12px',
-                fontSize: '1.1rem',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 8px 25px rgba(255, 215, 0, 0.3)'
-              }}>
-                무료 상담 신청
-              </button>
-              <button style={{
-                padding: '16px 32px',
-                backgroundColor: 'transparent',
-                color: 'white',
-                border: '2px solid rgba(255, 255, 255, 0.5)',
-                borderRadius: '12px',
-                fontSize: '1.1rem',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                backdropFilter: 'blur(10px)'
-              }}>
-                포트폴리오 보기
-              </button>
+              <Link href="/consultation">
+                <button style={{
+                  padding: '16px 32px',
+                  backgroundColor: '#FFD700',
+                  color: '#1a1a1a',
+                  border: 'none',
+                  borderRadius: '12px',
+                  fontSize: '1.1rem',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 8px 25px rgba(255, 215, 0, 0.3)'
+                }}>
+                  무료 상담 신청
+                </button>
+              </Link>
+              <Link href="/portfolio">
+                <button style={{
+                  padding: '16px 32px',
+                  backgroundColor: 'transparent',
+                  color: 'white',
+                  border: '2px solid rgba(255, 255, 255, 0.5)',
+                  borderRadius: '12px',
+                  fontSize: '1.1rem',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  backdropFilter: 'blur(10px)'
+                }}>
+                  포트폴리오 보기
+                </button>
+              </Link>
             </div>
           </div>
 
