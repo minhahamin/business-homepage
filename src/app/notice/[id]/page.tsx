@@ -28,37 +28,37 @@ export default function NoticeDetail() {
   useEffect(() => {
     let isMounted = true;
 
-    const loadNotice = async () => {
-      if (!isMounted) return;
-      await fetchNotice();
+    const fetchNotice = async () => {
+      try {
+        const response = await fetch(`/api/notices/${params.id}`);
+        const result = await response.json();
+
+        if (!isMounted) return;
+
+        if (response.ok) {
+          setNotice(result.notice);
+        } else {
+          alert('공지사항을 찾을 수 없습니다.');
+          router.push('/notice');
+        }
+      } catch (error) {
+        console.error('공지사항 조회 실패:', error);
+        if (isMounted) {
+          router.push('/notice');
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
     };
 
-    loadNotice();
+    fetchNotice();
 
     return () => {
       isMounted = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const fetchNotice = async () => {
-    try {
-      const response = await fetch(`/api/notices/${params.id}`);
-      const result = await response.json();
-
-      if (response.ok) {
-        setNotice(result.notice);
-      } else {
-        alert('공지사항을 찾을 수 없습니다.');
-        router.push('/notice');
-      }
-    } catch (error) {
-      console.error('공지사항 조회 실패:', error);
-      router.push('/notice');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [params.id, router]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
