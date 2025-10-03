@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     });
 
     // HttpOnly 쿠키에 토큰 저장 (보안)
-    response.cookies.set('admin_token', token, {
+    (await response.cookies).set('admin_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',

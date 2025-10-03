@@ -6,7 +6,7 @@ import { prisma } from '@/lib/prisma';
 // 관리자용 - 모든 공지사항 조회
 export async function GET(request: Request) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const token = cookieStore.get('admin_token')?.value;
     const user = getUserFromToken(token);
 
@@ -64,7 +64,7 @@ export async function GET(request: Request) {
 // 관리자용 - 공지사항 작성
 export async function POST(request: Request) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const token = cookieStore.get('admin_token')?.value;
     const user = getUserFromToken(token);
 
