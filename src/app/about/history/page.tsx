@@ -3,7 +3,7 @@ import Header from '@/components/Header';
 export default function History() {
   const historyData = [
     {
-      year: '2024',
+      year: '2025',
       title: 'AI/머신러닝 서비스 런칭',
       description: '고객 맞춤형 AI 솔루션 개발 및 서비스 시작',
       achievements: ['AI 챗봇 플랫폼 출시', '데이터 분석 서비스 확장', '클라우드 AI 인프라 구축']

@@ -99,7 +99,7 @@ export default function Certificates() {
                       fontSize: '14px',
                       color: '#6b7280'
                     }}>
-                      특허번호: 10-2024-001234
+                      특허번호: 10-2025-001234
                     </p>
                   </div>
                 </div>
@@ -150,7 +150,7 @@ export default function Certificates() {
                       fontSize: '14px',
                       color: '#6b7280'
                     }}>
-                      특허번호: 10-2024-001235
+                      특허번호: 10-2025-001235
                     </p>
                   </div>
                 </div>
@@ -201,7 +201,7 @@ export default function Certificates() {
                       fontSize: '14px',
                       color: '#6b7280'
                     }}>
-                      특허번호: 10-2024-001236
+                      특허번호: 10-2025-001236
                     </p>
                   </div>
                 </div>

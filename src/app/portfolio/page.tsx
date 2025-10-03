@@ -24,7 +24,7 @@ export default function Portfolio() {
       description: 'React 기반의 고성능 이커머스 플랫폼 구축. 실시간 재고 관리 및 AI 추천 시스템 통합',
       tags: ['React', 'Node.js', 'MongoDB', 'AWS'],
       image: '🛒',
-      date: '2024.08',
+      date: '2025.08',
       results: ['월 거래액 300% 증가', '페이지 로딩 속도 70% 개선', '고객 만족도 95%']
     },
     {
@@ -35,7 +35,7 @@ export default function Portfolio() {
       description: 'AI 기반 건강 관리 앱. 실시간 건강 데이터 분석 및 맞춤형 운동 추천',
       tags: ['React Native', 'TensorFlow', 'Firebase'],
       image: '💪',
-      date: '2024.07',
+      date: '2025.07',
       results: ['사용자 10만명 돌파', '일일 활성 사용자 85%', '앱스토어 평점 4.8']
     },
     {
@@ -46,7 +46,7 @@ export default function Portfolio() {
       description: '자연어 처리 기반 고객 상담 챗봇. 24시간 자동 응대 시스템 구축',
       tags: ['Python', 'GPT-4', 'FastAPI', 'Redis'],
       image: '🤖',
-      date: '2024.06',
+      date: '2025.06',
       results: ['상담 처리 시간 80% 단축', '고객 응대율 99%', '운영 비용 60% 절감']
     },
     {
@@ -57,7 +57,7 @@ export default function Portfolio() {
       description: 'AWS 기반 마이크로서비스 아키텍처 설계 및 구축. CI/CD 파이프라인 자동화',
       tags: ['AWS', 'Docker', 'Kubernetes', 'Jenkins'],
       image: '☁️',
-      date: '2024.05',
+      date: '2025.05',
       results: ['배포 시간 90% 단축', '시스템 안정성 99.9%', '인프라 비용 40% 절감']
     },
     {
@@ -68,7 +68,7 @@ export default function Portfolio() {
       description: '생산부터 판매까지 통합 관리하는 전사적 자원관리 시스템',
       tags: ['Vue.js', 'Java Spring', 'PostgreSQL', 'Docker'],
       image: '📊',
-      date: '2024.04',
+      date: '2025.04',
       results: ['업무 효율 200% 향상', '재고 관리 정확도 98%', '매출 가시성 확보']
     },
     {
@@ -79,7 +79,7 @@ export default function Portfolio() {
       description: 'CNN 기반 제품 불량 자동 검사 시스템. 실시간 품질 관리',
       tags: ['Python', 'TensorFlow', 'OpenCV', 'FastAPI'],
       image: '📸',
-      date: '2024.03',
+      date: '2025.03',
       results: ['불량률 95% 감소', '검사 시간 80% 단축', 'ROI 350%']
     },
     {
@@ -90,7 +90,7 @@ export default function Portfolio() {
       description: '실시간 주문 추적 및 라이더 배치 최적화 시스템',
       tags: ['Flutter', 'Node.js', 'MongoDB', 'Socket.io'],
       image: '🚀',
-      date: '2024.02',
+      date: '2025.02',
       results: ['배달 시간 30% 단축', '라이더 효율 50% 증가', '주문량 400% 증가']
     },
     {
@@ -101,7 +101,7 @@ export default function Portfolio() {
       description: '실시간 화상 강의 및 학습 관리 시스템. 인터랙티브 교육 콘텐츠 제공',
       tags: ['Next.js', 'WebRTC', 'GraphQL', 'PostgreSQL'],
       image: '📚',
-      date: '2024.01',
+      date: '2025.01',
       results: ['수강생 5만명 돌파', '수업 만족도 92%', '완강률 78%']
     },
   ];

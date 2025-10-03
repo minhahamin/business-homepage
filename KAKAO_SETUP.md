@@ -111,7 +111,7 @@ npm run dev
     kakao: { success: true, mode: "demo" },
     email: { success: true }
   },
-  timestamp: "2024-..."
+  timestamp: "2025-..."
 }
 ```
 
