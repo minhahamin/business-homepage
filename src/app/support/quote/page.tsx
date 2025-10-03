@@ -18,6 +18,9 @@ export default function Quote() {
   });
 
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const serviceTypes = [
     '웹사이트 개발',
@@ -81,11 +84,56 @@ export default function Quote() {
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 폼 제출 로직 (실제 구현에서는 API 호출)
-    console.log('견적 요청:', { ...formData, additionalServices: selectedServices });
-    alert('견적 요청이 접수되었습니다. 영업일 기준 1-2일 내에 연락드리겠습니다.');
+    setIsSubmitting(true);
+    setErrorMessage('');
+
+    try {
+      const response = await fetch('/api/quote', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          additionalServices: selectedServices
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || '견적 요청에 실패했습니다.');
+      }
+
+      console.log('✅ 견적 요청 성공:', result);
+      setIsSubmitted(true);
+
+      // 5초 후 폼 리셋
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setFormData({
+          companyName: '',
+          contactPerson: '',
+          email: '',
+          phone: '',
+          serviceType: '',
+          projectType: '',
+          budget: '',
+          timeline: '',
+          description: '',
+          additionalServices: []
+        });
+        setSelectedServices([]);
+      }, 5000);
+
+    } catch (error) {
+      console.error('❌ 견적 요청 실패:', error);
+      setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -156,6 +204,58 @@ export default function Quote() {
               </h2>
 
               <form onSubmit={handleSubmit}>
+                {/* 성공 메시지 */}
+                {isSubmitted && (
+                  <div style={{
+                    padding: '20px',
+                    backgroundColor: '#e8f5e9',
+                    borderRadius: '12px',
+                    marginBottom: '24px',
+                    border: '2px solid #4caf50'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      marginBottom: '8px'
+                    }}>
+                      <span style={{ fontSize: '2rem' }}>✅</span>
+                      <h3 style={{
+                        fontSize: '1.2rem',
+                        fontWeight: 'bold',
+                        color: '#2e7d32',
+                        margin: 0
+                      }}>
+                        견적 요청이 접수되었습니다!
+                      </h3>
+                    </div>
+                    <p style={{
+                      color: '#2e7d32',
+                      fontSize: '0.95rem',
+                      margin: '8px 0 0 52px',
+                      lineHeight: '1.6'
+                    }}>
+                      영업일 기준 1-2일 내에 담당자가 연락드리겠습니다.<br />
+                      📧 이메일로 견적서가 발송됩니다.
+                    </p>
+                  </div>
+                )}
+
+                {/* 에러 메시지 */}
+                {errorMessage && (
+                  <div style={{
+                    padding: '16px',
+                    backgroundColor: '#ffebee',
+                    borderRadius: '8px',
+                    marginBottom: '24px',
+                    color: '#c62828',
+                    fontSize: '0.95rem',
+                    border: '1px solid #ef5350'
+                  }}>
+                    ⚠️ {errorMessage}
+                  </div>
+                )}
+
                 {/* 기본 정보 */}
                 <div style={{ marginBottom: '30px' }}>
                   <h3 style={{
@@ -509,21 +609,47 @@ export default function Quote() {
                 {/* 제출 버튼 */}
                 <button
                   type="submit"
+                  disabled={isSubmitting || isSubmitted}
                   style={{
                     width: '100%',
                     padding: '16px',
-                    backgroundColor: '#667eea',
+                    backgroundColor: (isSubmitting || isSubmitted) ? '#ccc' : '#667eea',
                     color: 'white',
                     border: 'none',
                     borderRadius: '8px',
                     fontSize: '16px',
                     fontWeight: 'bold',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
+                    cursor: (isSubmitting || isSubmitted) ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.2s ease',
+                    opacity: (isSubmitting || isSubmitted) ? 0.7 : 1
                   }}
                 >
-                  견적 요청하기
+                  {isSubmitting ? (
+                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                      <span style={{
+                        display: 'inline-block',
+                        width: '16px',
+                        height: '16px',
+                        border: '2px solid white',
+                        borderTopColor: 'transparent',
+                        borderRadius: '50%',
+                        animation: 'spin 0.8s linear infinite'
+                      }}></span>
+                      전송 중...
+                    </span>
+                  ) : isSubmitted ? (
+                    '✅ 접수 완료'
+                  ) : (
+                    '견적 요청하기'
+                  )}
                 </button>
+
+                {/* 스피너 애니메이션 */}
+                <style jsx>{`
+                  @keyframes spin {
+                    to { transform: rotate(360deg); }
+                  }
+                `}</style>
               </form>
             </div>
 

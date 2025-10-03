@@ -1,4 +1,8 @@
 import { NextResponse } from 'next/server';
+import { Resend } from 'resend';
+
+// Resend 초기화
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // 카카오톡 알림 전송 함수
 async function sendKakaoNotification(formData: any) {
@@ -65,31 +69,66 @@ ${formData.message || '없음'}
   }
 }
 
-// 이메일 알림 전송 함수 (추가 옵션)
+// 이메일 알림 전송 함수 (Resend)
 async function sendEmailNotification(formData: any) {
   try {
-    console.log('📧 [데모] 이메일 알림이 전송되었습니다:');
-    console.log({
-      to: process.env.ADMIN_EMAIL || 'admin@company.com',
-      subject: `🔔 새로운 상담 신청 - ${formData.name}님`,
-      body: `
-        새로운 상담 신청이 접수되었습니다.
-        
-        이름: ${formData.name}
-        회사: ${formData.company || '미입력'}
-        이메일: ${formData.email}
-        연락처: ${formData.phone}
-        관심 서비스: ${getServiceName(formData.service)}
-        예산: ${getBudgetRange(formData.budget)}
-        희망 일정: ${getTimelineText(formData.timeline)}
-        
-        상세 내용:
-        ${formData.message || '없음'}
-      `
-    });
+    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@company.com';
+    const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
 
-    // 실제로는 nodemailer, SendGrid, AWS SES 등을 사용
-    return { success: true };
+    const emailContent = `
+새로운 상담 신청이 접수되었습니다.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 상담 신청서
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📌 기본 정보
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+👤 이름: ${formData.name}
+🏢 회사: ${formData.company || '미입력'}
+📧 이메일: ${formData.email}
+📞 연락처: ${formData.phone}
+
+📌 상담 내용
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💼 관심 서비스: ${getServiceName(formData.service)}
+💰 예산: ${getBudgetRange(formData.budget)}
+📅 희망 일정: ${getTimelineText(formData.timeline)}
+
+📝 상세 내용:
+${formData.message || '없음'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⏰ 접수 시간: ${new Date().toLocaleString('ko-KR')}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    `;
+
+    // Resend로 실제 이메일 발송
+    if (process.env.RESEND_API_KEY) {
+      const data = await resend.emails.send({
+        from: FROM_EMAIL,
+        to: ADMIN_EMAIL,
+        subject: `🔔 새로운 상담 신청 - ${formData.name}님`,
+        text: emailContent,
+        html: `
+          <div style="font-family: monospace; white-space: pre-wrap; background-color: #f5f5f5; padding: 20px; border-radius: 8px;">
+            ${emailContent}
+          </div>
+        `,
+      });
+
+      console.log('✅ 이메일 전송 성공:', data);
+      return { success: true, mode: 'production', emailId: data.id };
+    } else {
+      // API 키가 없으면 데모 모드
+      console.log('📧 [데모] 상담 신청 이메일 (RESEND_API_KEY 미설정):');
+      console.log({
+        to: ADMIN_EMAIL,
+        subject: `🔔 새로운 상담 신청 - ${formData.name}님`,
+        content: emailContent
+      });
+      return { success: true, mode: 'demo' };
+    }
   } catch (error) {
     console.error('이메일 전송 실패:', error);
     return { success: false, error };
