@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+// 조회수 증가 여부를 판단하는 간단한 캐시 (메모리)
+const viewCache = new Map<string, number>();
+const CACHE_DURATION = 60000; // 1분
+
 // 특정 공지사항 조회 (조회수 증가)
 export async function GET(
   request: Request,
@@ -8,15 +12,24 @@ export async function GET(
 ) {
   try {
     const { id } = params;
+    
+    // 클라이언트 IP나 세션 식별 (간단한 버전)
+    const ip = request.headers.get('x-forwarded-for') || 'unknown';
+    const cacheKey = `${id}-${ip}`;
+    const now = Date.now();
+    
+    // 최근에 조회한 기록이 있는지 확인
+    const lastView = viewCache.get(cacheKey);
+    const shouldIncrement = !lastView || (now - lastView > CACHE_DURATION);
 
-    // 조회수 증가 및 공지사항 조회
+    // 조회수 증가 (중복 방지)
     const notice = await prisma.notice.update({
       where: { id },
-      data: {
+      data: shouldIncrement ? {
         views: {
           increment: 1,
         },
-      },
+      } : {},
       include: {
         author: {
           select: {
@@ -26,6 +39,17 @@ export async function GET(
         },
       },
     });
+
+    // 캐시 업데이트
+    if (shouldIncrement) {
+      viewCache.set(cacheKey, now);
+      
+      // 오래된 캐시 정리 (메모리 관리)
+      if (viewCache.size > 1000) {
+        const entries = Array.from(viewCache.entries());
+        entries.slice(0, 500).forEach(([key]) => viewCache.delete(key));
+      }
+    }
 
     if (!notice || !notice.isPublished) {
       return NextResponse.json(

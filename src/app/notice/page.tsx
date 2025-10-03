@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './Notice.module.css';
 import Header from '@/components/Header';
 
@@ -17,6 +18,7 @@ interface Notice {
 }
 
 export default function Notice() {
+  const router = useRouter();
   const [notices, setNotices] = useState<Notice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -217,8 +219,10 @@ export default function Notice() {
                   <div
                     key={notice.id}
                     className={styles.tableRow}
+                    onClick={() => router.push(`/notice/${notice.id}`)}
                     style={{
-                      borderBottom: index < notices.length - 1 ? '1px solid #f1f5f9' : 'none'
+                      borderBottom: index < notices.length - 1 ? '1px solid #f1f5f9' : 'none',
+                      cursor: 'pointer'
                     }}
                   >
                     {/* 번호 */}
@@ -273,8 +277,10 @@ export default function Notice() {
                   <div
                     key={`mobile-${notice.id}`}
                     className={styles.mobileCard}
+                    onClick={() => router.push(`/notice/${notice.id}`)}
                     style={{
-                      borderBottom: index < notices.length - 1 ? '1px solid #f1f5f9' : 'none'
+                      borderBottom: index < notices.length - 1 ? '1px solid #f1f5f9' : 'none',
+                      cursor: 'pointer'
                     }}
                   >
                     {/* 제목과 고정 표시 */}
