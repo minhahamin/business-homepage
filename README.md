@@ -1,7 +1,7 @@
 ﻿# Business Homepage
 
 현대적이고 전문적인 비즈니스 홈페이지입니다. Next.js, TypeScript, Tailwind CSS를 사용하여 제작되었습니다.
-배포 : https://business-homepage-mauve.vercel.app/
+배포 : https://business-homepage-iota.vercel.app/
 
 ## 🚀 주요 기능
 
@@ -193,3 +193,4 @@ npm start
 
 
 💡 **참고**: 이 프로젝트는 대중화된 사업 랜딩 페이지와 제 상상력(?)을 참고하여 제작되었습니다.
+
