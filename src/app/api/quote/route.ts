@@ -58,7 +58,7 @@ ${formData.additionalServices.join(', ')}
       });
 
       console.log('✅ 이메일 전송 성공:', data);
-      return { success: true, mode: 'production', emailId: data.id };
+      return { success: true, mode: 'production', emailId: data.data?.id };
     } else {
       // API 키가 없으면 데모 모드
       console.log('📧 [데모] 견적 요청 이메일 (RESEND_API_KEY 미설정):');
