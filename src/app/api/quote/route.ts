@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-// Resend 초기화
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Resend 초기화 함수
+function getResendClient() {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return null;
+  return new Resend(apiKey);
+}
 
 // 견적 요청 이메일 전송
 async function sendQuoteEmail(formData: any) {
@@ -44,7 +48,8 @@ ${formData.additionalServices.join(', ')}
     `;
 
     // Resend로 실제 이메일 발송
-    if (process.env.RESEND_API_KEY) {
+    const resend = getResendClient();
+    if (resend) {
       const data = await resend.emails.send({
         from: FROM_EMAIL,
         to: ADMIN_EMAIL,
